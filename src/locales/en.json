@@ -1,0 +1,19 @@
+{
+  "welcome": "Welcome! I'm John Doe, a software developer.",
+  "available": "I'm currently available for new projects.",
+  "location": "Location: San Francisco, CA",
+  "currentProject": "Main current project: Building a React-based portfolio website",
+  "collaboration": "Current collaboration: Working with a team on an open-source project",
+  "latestWork": "Latest Work",
+  "currentProjectDetails": "Current Project",
+  "aboutMe": "About Me",
+  "contact": "Contact",
+  "emailPrompt": "Great! Please enter your email address.",
+  "invalidEmail": "Please enter a valid email address.",
+  "emailConfirmation": "Thank you. Your email ({{email}}) has been recorded. Now, please type your message.",
+  "messageSent": "Thank you for your message! I'll get back to you soon.",
+  "messageError": "There was an error sending your message. Please try again later.",
+  "languagePrompt": "Would you like to continue with {{language}}? (Click 'Yes' or choose another language)",
+  "yes": "Yes",
+  "chooseLanguage": "Choose Language"
+}

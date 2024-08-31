@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Github, Briefcase, User, Mail, CheckCircle } from 'lucide-react';
+import { Send, Github, Briefcase, User, Mail, CheckCircle, Globe } from 'lucide-react';
 import emailjs from 'emailjs-com';
+import { useTranslation } from 'react-i18next';
 
 const inputContainerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -70,13 +71,14 @@ const Button = ({ onClick, children, icon: Icon }) => (
 );
 
 const Index = () => {
+  const { t, i18n } = useTranslation();
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [userInput, setUserInput] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [formattedEmail, setFormattedEmail] = useState('');
   const [showInput, setShowInput] = useState(false);
-  const [currentStep, setCurrentStep] = useState('welcome');
+  const [currentStep, setCurrentStep] = useState('language');
   const [inputType, setInputType] = useState('email');
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
@@ -97,45 +99,58 @@ const Index = () => {
     setMessages((prevMessages) => [...prevMessages, { sender: 'user', message: choice }]);
     
     switch (choice) {
-      case 'Latest Work':
-        addBotMessage("Here are my latest GitHub projects:");
+      case t('latestWork'):
+        addBotMessage(t('latestWorkResponse'));
         // Fetch and display GitHub projects
         break;
-      case 'Current Project Details':
-        addBotMessage("I'm currently working on a React-based portfolio website with a chatbot interface.");
+      case t('currentProjectDetails'):
+        addBotMessage(t('currentProjectResponse'));
         break;
-      case 'About Me':
-        addBotMessage("I'm a software developer with 5 years of experience, specializing in React and Node.js.");
+      case t('aboutMe'):
+        addBotMessage(t('aboutMeResponse'));
         break;
-      case 'Contact':
+      case t('contact'):
         setShowInput(true);
         setInputType('email');
-        addBotMessage("Great! Please enter your email address.");
+        addBotMessage(t('emailPrompt'));
         break;
       default:
-        addBotMessage("I'm not sure how to respond to that. Can you please choose one of the options?");
+        addBotMessage(t('defaultResponse'));
     }
   };
 
-  useEffect(() => {
-    const initializeChat = async () => {
-      addBotMessage("Welcome! I'm John Doe, a software developer.");
+  const handleLanguageChoice = (lang) => {
+    i18n.changeLanguage(lang);
+    setCurrentStep('welcome');
+    initializeChat();
+  };
+
+  const initializeChat = async () => {
+    addBotMessage(t('welcome'));
+    setTimeout(() => {
+      addBotMessage(t('available'));
       setTimeout(() => {
-        addBotMessage("I'm currently available for new projects.");
+        addBotMessage(t('location'));
         setTimeout(() => {
-          addBotMessage("Location: San Francisco, CA");
+          addBotMessage(t('currentProject'));
           setTimeout(() => {
-            addBotMessage("Main current project: Building a React-based portfolio website");
-            setTimeout(() => {
-              addBotMessage("Current collaboration: Working with a team on an open-source project");
-              setCurrentStep('userChoice');
-            }, 1500);
+            addBotMessage(t('collaboration'));
+            setCurrentStep('userChoice');
           }, 1500);
         }, 1500);
       }, 1500);
-    };
+    }, 1500);
+  };
 
-    initializeChat();
+  useEffect(() => {
+    const detectedLang = i18n.language;
+    addBotMessage(t('languagePrompt', { language: t(`languages.${detectedLang}`) }));
+    
+    const timer = setTimeout(() => {
+      handleLanguageChoice(detectedLang);
+    }, 3000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -153,9 +168,9 @@ const Index = () => {
         setFormattedEmail(formatted);
         setUserInput('');
         setInputType('message');
-        addBotMessage(`Thank you. Your email (${formatted}) has been recorded. Now, please type your message.`);
+        addBotMessage(t('emailConfirmation', { email: formatted }));
       } else {
-        addBotMessage("Please enter a valid email address.");
+        addBotMessage(t('invalidEmail'));
       }
     } else if (inputType === 'message') {
       if (userInput.trim()) {
@@ -171,14 +186,13 @@ const Index = () => {
           },
           import.meta.env.VITE_EMAILJS_USER_ID
         )
-
         .then((response) => {
           console.log('Email sent successfully:', response);
-          addBotMessage("Thank you for your message! I'll get back to you soon.");
+          addBotMessage(t('messageSent'));
         })
         .catch((error) => {
           console.error('Error sending email:', error);
-          addBotMessage("There was an error sending your message. Please try again later.");
+          addBotMessage(t('messageError'));
         });
 
         setUserInput('');
@@ -191,8 +205,19 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-      <div className="bg-green-600 text-white p-4 shadow-md">
-        <h1 className="text-xl font-semibold">John Doe - Software Developer</h1>
+      <div className="bg-green-600 text-white p-4 shadow-md flex justify-between items-center">
+        <h1 className="text-xl font-semibold">John Doe - {t('softwareDeveloper')}</h1>
+        <div className="flex space-x-2">
+          {['en', 'pt', 'es'].map((lang) => (
+            <button
+              key={lang}
+              onClick={() => handleLanguageChoice(lang)}
+              className={`px-2 py-1 rounded ${i18n.language === lang ? 'bg-white text-green-600' : 'bg-green-700'}`}
+            >
+              {lang.toUpperCase()}
+            </button>
+          ))}
+        </div>
       </div>
       <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-4">
         <AnimatePresence>
@@ -203,13 +228,32 @@ const Index = () => {
         </AnimatePresence>
         <div ref={messagesEndRef} />
       </div>
+      {currentStep === 'language' && (
+        <div className="p-4 bg-white border-t border-gray-200">
+          <div className="flex justify-center space-x-4">
+            <Button onClick={() => handleLanguageChoice(i18n.language)} icon={Globe}>{t('yes')}</Button>
+            <Button onClick={() => setCurrentStep('languageChoice')} icon={Globe}>{t('chooseLanguage')}</Button>
+          </div>
+        </div>
+      )}
+      {currentStep === 'languageChoice' && (
+        <div className="p-4 bg-white border-t border-gray-200">
+          <div className="flex justify-center space-x-4">
+            {['en', 'pt', 'es'].map((lang) => (
+              <Button key={lang} onClick={() => handleLanguageChoice(lang)} icon={Globe}>
+                {t(`languages.${lang}`)}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
       {currentStep === 'userChoice' && (
         <div className="p-4 bg-white border-t border-gray-200">
           <div className="grid grid-cols-2 md:flex md:justify-center gap-4 md:space-x-4">
-            <Button onClick={() => handleUserChoice('Latest Work')} icon={Github}>Latest Work</Button>
-            <Button onClick={() => handleUserChoice('Current Project Details')} icon={Briefcase}>Current Project</Button>
-            <Button onClick={() => handleUserChoice('About Me')} icon={User}>About Me</Button>
-            <Button onClick={() => handleUserChoice('Contact')} icon={Mail}>Contact</Button>
+            <Button onClick={() => handleUserChoice(t('latestWork'))} icon={Github}>{t('latestWork')}</Button>
+            <Button onClick={() => handleUserChoice(t('currentProjectDetails'))} icon={Briefcase}>{t('currentProjectDetails')}</Button>
+            <Button onClick={() => handleUserChoice(t('aboutMe'))} icon={User}>{t('aboutMe')}</Button>
+            <Button onClick={() => handleUserChoice(t('contact'))} icon={Mail}>{t('contact')}</Button>
           </div>
         </div>
       )}
@@ -240,7 +284,7 @@ const Index = () => {
                     type={inputType === 'email' ? 'email' : 'text'}
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
-                    placeholder={inputType === 'email' ? "Enter your email" : "Type your message"}
+                    placeholder={inputType === 'email' ? t('enterEmail') : t('typeMessage')}
                     className="w-full p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </motion.div>
