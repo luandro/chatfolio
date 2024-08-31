@@ -4,6 +4,7 @@
     "pt": "Portuguese",
     "es": "Spanish"
   },
+  "name": "Joe Doe",
   "welcome": "Welcome! I'm Joe Doe, a software developer.",
   "available": "I'm currently available for new projects.",
   "location": "Location: San Francisco, CA",
