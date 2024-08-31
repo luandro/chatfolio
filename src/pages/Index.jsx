@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Github, Briefcase, User } from 'lucide-react';
+import { Send, Github, Briefcase, User, Mail } from 'lucide-react';
+import emailjs from 'emailjs-com';
 
 const inputContainerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -72,10 +73,16 @@ const Index = () => {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [userInput, setUserInput] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [showInput, setShowInput] = useState(false);
   const [currentStep, setCurrentStep] = useState('welcome');
+  const [inputType, setInputType] = useState('email');
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
+
+  const validateEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
 
   const addBotMessage = (message, delay = 1000) => {
     setIsTyping(true);
@@ -101,7 +108,8 @@ const Index = () => {
         break;
       case 'Contact':
         setShowInput(true);
-        addBotMessage("Great! Please type your message below.");
+        setInputType('email');
+        addBotMessage("Great! Please enter your email address.");
         break;
       default:
         addBotMessage("I'm not sure how to respond to that. Can you please choose one of the options?");
@@ -135,12 +143,42 @@ const Index = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (userInput.trim()) {
-      setMessages((prevMessages) => [...prevMessages, { sender: 'user', message: userInput }]);
-      setUserInput('');
-      addBotMessage("Thank you for your message! I'll get back to you soon.");
-      setShowInput(false);
-      setCurrentStep('userChoice');
+    if (inputType === 'email') {
+      if (validateEmail(userInput)) {
+        setUserEmail(userInput);
+        setUserInput('');
+        setInputType('message');
+        addBotMessage("Thank you. Now, please type your message.");
+      } else {
+        addBotMessage("Please enter a valid email address.");
+      }
+    } else if (inputType === 'message') {
+      if (userInput.trim()) {
+        setMessages((prevMessages) => [...prevMessages, { sender: 'user', message: userInput }]);
+        
+        // Send email using EmailJS
+        emailjs.send(
+          'YOUR_SERVICE_ID',
+          'YOUR_TEMPLATE_ID',
+          {
+            from_email: userEmail,
+            message: userInput
+          },
+          'YOUR_USER_ID'
+        )
+        .then((response) => {
+          console.log('Email sent successfully:', response);
+          addBotMessage("Thank you for your message! I'll get back to you soon.");
+        })
+        .catch((error) => {
+          console.error('Error sending email:', error);
+          addBotMessage("There was an error sending your message. Please try again later.");
+        });
+
+        setUserInput('');
+        setShowInput(false);
+        setCurrentStep('userChoice');
+      }
     }
   };
 
@@ -164,7 +202,7 @@ const Index = () => {
             <Button onClick={() => handleUserChoice('Latest Work')} icon={Github}>Latest Work</Button>
             <Button onClick={() => handleUserChoice('Current Project Details')} icon={Briefcase}>Current Project</Button>
             <Button onClick={() => handleUserChoice('About Me')} icon={User}>About Me</Button>
-            <Button onClick={() => handleUserChoice('Contact')} icon={Send}>Contact</Button>
+            <Button onClick={() => handleUserChoice('Contact')} icon={Mail}>Contact</Button>
           </div>
         </div>
       )}
@@ -181,10 +219,10 @@ const Index = () => {
             <div className="flex space-x-2">
               <motion.div className="flex-grow" variants={inputElementVariants}>
                 <input
-                  type="text"
+                  type={inputType === 'email' ? 'email' : 'text'}
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
-                  placeholder="Type your message"
+                  placeholder={inputType === 'email' ? "Enter your email" : "Type your message"}
                   className="w-full p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </motion.div>
