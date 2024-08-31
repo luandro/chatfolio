@@ -18,10 +18,13 @@ module.exports = {
     },
     extend: {
       colors: {
+        main: '#A593E0',
+        second: '#FFFFF3',
+        background: '#FFFFF3',
+        chatBubble: '#E0E3DA',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",

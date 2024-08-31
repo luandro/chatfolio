@@ -94,7 +94,6 @@ a:focus {
   font-family: 'Georgia', serif;
   line-height: 1.6;
   color: var(--foreground);
-  background-color: var(--background);
   padding: 1rem;
   border-radius: 0.5rem;
   border: 1px solid var(--border);
