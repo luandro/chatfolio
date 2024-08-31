@@ -9,8 +9,8 @@ import { sendEmail } from '../lib/email';
 
 const inputContainerVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: {
       duration: 0.5,
@@ -22,8 +22,8 @@ const inputContainerVariants = {
 
 const inputElementVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: {
       type: "spring",
@@ -41,9 +41,8 @@ const ChatMessage = ({ message, sender }) => (
     className={`mb-4 ${sender === 'user' ? 'flex justify-end' : 'flex justify-start'}`}
   >
     <div
-      className={`max-w-[70%] px-4 py-6 rounded-lg ${
-        sender === 'user' ? 'bg-main text-white rounded-br-none' : 'bg-chatBubble text-gray-800 rounded-bl-none'
-      }`}
+      className={`max-w-[70%] px-4 py-6 rounded-lg ${sender === 'user' ? 'bg-main text-white rounded-br-none' : 'bg-chatBubble text-gray-800 rounded-bl-none'
+        }`}
     >
       {message}
     </div>
@@ -97,12 +96,12 @@ const Index = () => {
       setIsTyping(false);
       if (['md', 'markdown'].includes(format.toLowerCase())) {
         setMessages((prevMessages) => [
-          ...prevMessages, 
+          ...prevMessages,
           { sender: 'bot', message: marked.parse(message), format }
         ]);
       } else {
         setMessages((prevMessages) => [
-          ...prevMessages, 
+          ...prevMessages,
           { sender: 'bot', message, format }
         ]);
       }
@@ -110,6 +109,7 @@ const Index = () => {
   };
 
   const handleLanguageChoice = (lang) => {
+    setMessages((prevMessages) => prevMessages.slice(1)); // Remove the first message
     if (languageTimer) {
       clearTimeout(languageTimer);
     }
@@ -123,7 +123,7 @@ const Index = () => {
     const detectedLang = i18n.language;
     const prunedLang = detectedLang.split('-')[0];
     addBotMessage(t('languagePrompt', { language: t(`languages.${prunedLang}`) }));
-    
+
     const timer = setTimeout(() => {
       handleLanguageChoice(detectedLang);
     }, 5500);
@@ -142,7 +142,7 @@ const Index = () => {
     if (inputType === 'email') {
       if (validateEmail(userInput)) {
         setUserEmail(userInput);
-        const formatted = userInput.replace(/(.{2})(.+)(@.+)/, (_, start, middle, end) => 
+        const formatted = userInput.replace(/(.{2})(.+)(@.+)/, (_, start, middle, end) =>
           start + middle.replace(/./g, '*') + end
         );
         setFormattedEmail(formatted);
@@ -155,7 +155,7 @@ const Index = () => {
     } else if (inputType === 'message') {
       if (userInput.trim()) {
         setMessages((prevMessages) => [...prevMessages, { sender: 'user', message: userInput }]);
-        
+
         try {
           sendEmail(userEmail, userInput, t, addBotMessage, setMessages, setUserInput, setShowInput, setCurrentStep, setFormattedEmail);
         } catch (error) {
@@ -168,14 +168,18 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-      <div className="bg-main text-white p-4 shadow-md flex justify-between items-center">
-        <h1 className="text-xl font-semibold">{t('name')} - {t('workPosition')}</h1>
+      <div
+        className="navbar bg-main text-white p-4 shadow-md flex justify-between items-center transition-transform duration-5000"
+        style={{ transform: 'translateY(0)' }}
+
+      >
+        <h1 className="text-xl font-semibold slide-out">{t('name')} - {t('workPosition')}</h1>
         <div className="hidden sm:flex space-x-2">
           {['en', 'pt', 'es'].map((lang) => (
             <button
               key={lang}
               onClick={() => handleLanguageChoice(lang)}
-              className={`px-2 py-1 rounded ${i18n.language === lang ? 'bg-main text-second' : 'bg-second text-main'}`}
+              className={`px-2 py-1 rounded lang-button ${i18n.language === lang ? 'bg-main text-second' : 'bg-second text-main'}`}
             >
               {t(`languages.${lang}`)}
             </button>
@@ -195,7 +199,7 @@ const Index = () => {
           </select>
         </div>
       </div>
-      <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-4">
+      <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-4 text-[22px] font-serif">
         <AnimatePresence>
           {messages.map((msg, index) => (
             msg.format === 'markdown' ? (
