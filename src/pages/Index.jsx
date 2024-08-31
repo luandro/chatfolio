@@ -42,25 +42,30 @@ const Index = () => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const response = await fetch('/src/data/portfolio-messages.md');
-      const text = await response.text();
-      const lines = text.split('\n').filter(line => line.startsWith('- '));
-      const portfolioMessages = lines.map(line => line.slice(2));
+      try {
+        const response = await fetch('/portfolio-messages.md');
+        const text = await response.text();
+        const lines = text.split('\n').filter(line => line.startsWith('- '));
+        const portfolioMessages = lines.map(line => line.slice(2));
 
-      const addMessage = (index) => {
-        if (index < portfolioMessages.length) {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            setMessages((prevMessages) => [...prevMessages, { sender: 'bot', message: portfolioMessages[index] }]);
-            setTimeout(() => addMessage(index + 1), 1000);
-          }, 1500);
-        } else {
-          setConversationEnded(true);
-        }
-      };
+        const addMessage = (index) => {
+          if (index < portfolioMessages.length) {
+            setIsTyping(true);
+            setTimeout(() => {
+              setIsTyping(false);
+              setMessages((prevMessages) => [...prevMessages, { sender: 'bot', message: portfolioMessages[index] }]);
+              setTimeout(() => addMessage(index + 1), 1000);
+            }, 1500);
+          } else {
+            setConversationEnded(true);
+          }
+        };
 
-      addMessage(0);
+        addMessage(0);
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+        setMessages([{ sender: 'bot', message: 'Sorry, there was an error loading the portfolio messages.' }]);
+      }
     };
 
     fetchMessages();
