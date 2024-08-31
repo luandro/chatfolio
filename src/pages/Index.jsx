@@ -148,7 +148,8 @@ const Index = () => {
 
   useEffect(() => {
     const detectedLang = i18n.language;
-    addBotMessage(t('languagePrompt', { language: t(`languages.${detectedLang}`) }));
+    const prunedLang = detectedLang.split('-')[0];
+    addBotMessage(t('languagePrompt', { language: t(`languages.${prunedLang}`) }));
     
     const timer = setTimeout(() => {
       handleLanguageChoice(detectedLang);

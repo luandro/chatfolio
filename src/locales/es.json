@@ -1,4 +1,9 @@
 {
+  "languages": {
+    "en": "Inglés",
+    "pt": "Portugués",
+    "es": "Español"
+  },
   "welcome": "¡Bienvenido! Soy John Doe, un desarrollador de software.",
   "available": "Actualmente estoy disponible para nuevos proyectos.",
   "location": "Ubicación: San Francisco, CA",
