@@ -259,7 +259,7 @@ const Index = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-center space-x-2 text-main"
                 >
-                  <CheckCircle size={16} />
+                  <CheckCircle size={16} color='green' />
                   <span className="text-sm">{t('emailLabel')}: {formattedEmail}</span>
                 </motion.div>
               )}
