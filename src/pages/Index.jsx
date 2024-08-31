@@ -163,14 +163,15 @@ const Index = () => {
         
         // Send email using EmailJS
         emailjs.send(
-          'YOUR_SERVICE_ID',
-          'YOUR_TEMPLATE_ID',
+          import.meta.env.VITE_EMAILJS_SERVICE_ID,
+          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
           {
             from_email: userEmail,
             message: userInput
           },
-          'YOUR_USER_ID'
+          import.meta.env.VITE_EMAILJS_USER_ID
         )
+
         .then((response) => {
           console.log('Email sent successfully:', response);
           addBotMessage("Thank you for your message! I'll get back to you soon.");
