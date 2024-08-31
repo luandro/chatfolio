@@ -1,22 +1,28 @@
 import emailjs from 'emailjs-com';
 
-export const sendEmail = (userEmail, userMessage, t, addBotMessage, setMessages, setUserInput, setShowInput, setCurrentStep, setFormattedEmail) => {
-  const templateParams = {
-    email: userEmail,
-    message: userMessage,
-  };
+export const sendEmail = (userEmail, userInput, t, addBotMessage, setMessages, setUserInput, setShowInput, setCurrentStep, setFormattedEmail) => {
+  setMessages((prevMessages) => [...prevMessages, { sender: 'user', message: userInput }]);
+  
+  emailjs.send(
+    import.meta.env.VITE_EMAILJS_SERVICE_ID,
+    import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+    {
+      from_email: userEmail,
+      message: userInput
+    },
+    import.meta.env.VITE_EMAILJS_USER_ID
+  )
+  .then((response) => {
+    console.log('Email sent successfully:', response);
+    addBotMessage(t('messageSent'));
+  })
+  .catch((error) => {
+    console.error('Error sending email:', error);
+    addBotMessage(t('messageError'));
+  });
 
-  emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams, 'YOUR_USER_ID')
-    .then((response) => {
-      addBotMessage(t('emailSent'));
-      setMessages((prevMessages) => [...prevMessages, { sender: 'bot', message: t('emailSent') }]);
-      setUserInput('');
-      setShowInput(false);
-      setCurrentStep('language');
-      setFormattedEmail('');
-    })
-    .catch((error) => {
-      addBotMessage(t('emailError'));
-      setMessages((prevMessages) => [...prevMessages, { sender: 'bot', message: t('emailError') }]);
-    });
+  setUserInput('');
+  setShowInput(false);
+  setCurrentStep('userChoice');
+  setFormattedEmail('');
 };

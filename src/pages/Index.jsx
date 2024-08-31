@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Github, Briefcase, User, Mail, CheckCircle, Globe } from 'lucide-react';
-import emailjs from 'emailjs-com';
 import { useTranslation } from 'react-i18next';
+import { marked } from "marked";
+import { initializeChat } from '../lib/chatInit';
+import handleUserChoice from '../lib/userChoice';
+import { sendEmail } from '../lib/email';
 
 const inputContainerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -88,36 +91,22 @@ const Index = () => {
     return /\S+@\S+\.\S+/.test(email);
   };
 
-  const addBotMessage = (message, delay = 1000) => {
+  const addBotMessage = (message, delay = 1000, format = 'text') => {
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
-      setMessages((prevMessages) => [...prevMessages, { sender: 'bot', message }]);
+      if (['md', 'markdown'].includes(format.toLowerCase())) {
+        setMessages((prevMessages) => [
+          ...prevMessages, 
+          { sender: 'bot', message: marked.parse(message), format }
+        ]);
+      } else {
+        setMessages((prevMessages) => [
+          ...prevMessages, 
+          { sender: 'bot', message, format }
+        ]);
+      }
     }, delay);
-  };
-
-  const handleUserChoice = async (choice) => {
-    setMessages((prevMessages) => [...prevMessages, { sender: 'user', message: choice }]);
-    
-    switch (choice) {
-      case t('latestWork'):
-        addBotMessage(t('latestWorkResponse'));
-        // Fetch and display GitHub projects
-        break;
-      case t('currentProjectDetails'):
-        addBotMessage(t('currentProjectResponse'));
-        break;
-      case t('aboutMe'):
-        addBotMessage(t('aboutMeResponse'));
-        break;
-      case t('contact'):
-        setShowInput(true);
-        setInputType('email');
-        addBotMessage(t('emailPrompt'));
-        break;
-      default:
-        addBotMessage(t('defaultResponse'));
-    }
   };
 
   const handleLanguageChoice = (lang) => {
@@ -126,24 +115,7 @@ const Index = () => {
     }
     i18n.changeLanguage(lang);
     setCurrentStep('welcome');
-    initializeChat();
-  };
-
-  const initializeChat = async () => {
-    addBotMessage(t('welcome'));
-    setTimeout(() => {
-      addBotMessage(t('available'));
-      setTimeout(() => {
-        addBotMessage(t('location'));
-        setTimeout(() => {
-          addBotMessage(t('currentProject'));
-          setTimeout(() => {
-            addBotMessage(t('collaboration'));
-            setCurrentStep('userChoice');
-          }, 1500);
-        }, 1500);
-      }, 1500);
-    }, 1500);
+    initializeChat(addBotMessage, t, setCurrentStep);
   };
 
   useEffect(() => {
@@ -183,29 +155,7 @@ const Index = () => {
       if (userInput.trim()) {
         setMessages((prevMessages) => [...prevMessages, { sender: 'user', message: userInput }]);
         
-        // Send email using EmailJS
-        emailjs.send(
-          import.meta.env.VITE_EMAILJS_SERVICE_ID,
-          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-          {
-            from_email: userEmail,
-            message: userInput
-          },
-          import.meta.env.VITE_EMAILJS_USER_ID
-        )
-        .then((response) => {
-          console.log('Email sent successfully:', response);
-          addBotMessage(t('messageSent'));
-        })
-        .catch((error) => {
-          console.error('Error sending email:', error);
-          addBotMessage(t('messageError'));
-        });
-
-        setUserInput('');
-        setShowInput(false);
-        setCurrentStep('userChoice');
-        setFormattedEmail('');
+        sendEmail(userEmail, userInput, t, addBotMessage, setMessages, setUserInput, setShowInput, setCurrentStep, setFormattedEmail);
       }
     }
   };
@@ -213,7 +163,7 @@ const Index = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <div className="bg-green-600 text-white p-4 shadow-md flex justify-between items-center">
-        <h1 className="text-xl font-semibold">{t('name')} - {t('softwareDeveloper')}</h1>
+        <h1 className="text-xl font-semibold">{t('name')} - {t('workPosition')}</h1>
         <div className="flex space-x-2">
           {['en', 'pt', 'es'].map((lang) => (
             <button
@@ -229,7 +179,11 @@ const Index = () => {
       <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-4">
         <AnimatePresence>
           {messages.map((msg, index) => (
-            <ChatMessage key={index} message={msg.message} sender={msg.sender} />
+            msg.format === 'markdown' ? (
+              <div key={index} className="rendered-md" dangerouslySetInnerHTML={{ __html: msg.message }} />
+            ) : (
+              <ChatMessage key={index} message={msg.message} sender={msg.sender} />
+            )
           ))}
           {isTyping && <TypingIndicator key="typing" />}
         </AnimatePresence>
@@ -262,10 +216,10 @@ const Index = () => {
       {currentStep === 'userChoice' && (
         <div className="p-4 bg-white border-t border-gray-200">
           <div className="grid grid-cols-2 md:flex md:justify-center gap-4 md:space-x-4">
-            <Button onClick={() => handleUserChoice(t('latestWork'))} icon={Github}>{t('latestWork')}</Button>
-            <Button onClick={() => handleUserChoice(t('currentProjectDetails'))} icon={Briefcase}>{t('currentProjectDetails')}</Button>
-            <Button onClick={() => handleUserChoice(t('aboutMe'))} icon={User}>{t('aboutMe')}</Button>
-            <Button onClick={() => handleUserChoice(t('contact'))} icon={Mail}>{t('contact')}</Button>
+            <Button onClick={() => handleUserChoice(t('latestWork'), t, setMessages, addBotMessage, setShowInput, setInputType)} icon={Github}>{t('latestWork')}</Button>
+            <Button onClick={() => handleUserChoice(t('currentProjectDetails'), t, setMessages, addBotMessage, setShowInput, setInputType)} icon={Briefcase}>{t('currentProjectDetails')}</Button>
+            <Button onClick={() => handleUserChoice(t('aboutMe'), t, setMessages, addBotMessage, setShowInput, setInputType)} icon={User}>{t('aboutMe')}</Button>
+            <Button onClick={() => handleUserChoice(t('contact'), t, setMessages, addBotMessage, setShowInput, setInputType)} icon={Mail}>{t('contact')}</Button>
           </div>
         </div>
       )}
@@ -314,6 +268,6 @@ const Index = () => {
       </AnimatePresence>
     </div>
   );
-};
+}
 
 export default Index;
