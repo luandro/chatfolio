@@ -38,33 +38,30 @@ const Index = () => {
   const [conversationEnded, setConversationEnded] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const conversation = [
-    { sender: 'bot', message: "Hello! I'm John Doe, a software developer." },
-    { sender: 'user', message: "Nice to meet you, John! What's your expertise?" },
-    { sender: 'bot', message: "I specialize in React, Node.js, and cloud technologies." },
-    { sender: 'user', message: "That's impressive! Can you tell me about a recent project?" },
-    { sender: 'bot', message: "Sure! I recently built a scalable e-commerce platform using React for the frontend and Node.js with GraphQL for the backend. It handles thousands of concurrent users and integrates with various payment gateways." },
-    { sender: 'user', message: "Wow, that sounds complex. How do you handle challenges in your projects?" },
-    { sender: 'bot', message: "I approach challenges methodically. I break down problems, research solutions, and collaborate with team members when needed. Continuous learning is key in our field." },
-    { sender: 'user', message: "Great approach! What's your favorite part about being a developer?" },
-    { sender: 'bot', message: "I love the constant evolution of technology and the opportunity to create solutions that make a real impact. There's always something new to learn!" },
-  ];
-
   useEffect(() => {
-    const addMessage = (index) => {
-      if (index < conversation.length) {
-        setIsTyping(true);
-        setTimeout(() => {
-          setIsTyping(false);
-          setMessages((prevMessages) => [...prevMessages, conversation[index]]);
-          setTimeout(() => addMessage(index + 1), 1000);
-        }, 1500);
-      } else {
-        setConversationEnded(true);
-      }
+    const fetchMessages = async () => {
+      const response = await fetch('/src/data/portfolio-messages.md');
+      const text = await response.text();
+      const lines = text.split('\n').filter(line => line.startsWith('- '));
+      const portfolioMessages = lines.map(line => line.slice(2));
+
+      const addMessage = (index) => {
+        if (index < portfolioMessages.length) {
+          setIsTyping(true);
+          setTimeout(() => {
+            setIsTyping(false);
+            setMessages((prevMessages) => [...prevMessages, { sender: 'bot', message: portfolioMessages[index] }]);
+            setTimeout(() => addMessage(index + 1), 1000);
+          }, 1500);
+        } else {
+          setConversationEnded(true);
+        }
+      };
+
+      addMessage(0);
     };
 
-    addMessage(0);
+    fetchMessages();
   }, []);
 
   useEffect(() => {
