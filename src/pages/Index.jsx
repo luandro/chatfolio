@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Send } from 'lucide-react';
 
 const ChatMessage = ({ message, sender }) => (
   <motion.div
-    initial={{ opacity: 0, y: 50 }}
+    initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-    className={`mb-4 ${sender === 'user' ? 'text-right' : 'text-left'}`}
+    transition={{ duration: 0.3 }}
+    className={`mb-4 ${sender === 'user' ? 'flex justify-end' : 'flex justify-start'}`}
   >
     <div
-      className={`inline-block p-3 rounded-lg ${
-        sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'
+      className={`max-w-[70%] p-3 rounded-lg ${
+        sender === 'user' ? 'bg-green-500 text-white rounded-br-none' : 'bg-white text-gray-800 rounded-bl-none'
       }`}
     >
       {message}
@@ -23,7 +24,7 @@ const TypingIndicator = () => (
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     exit={{ opacity: 0 }}
-    className="flex space-x-2 mb-4"
+    className="flex space-x-2 mb-4 p-3 bg-gray-100 rounded-lg max-w-[70px]"
   >
     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
@@ -37,6 +38,7 @@ const Index = () => {
   const [userInput, setUserInput] = useState('');
   const [conversationEnded, setConversationEnded] = useState(false);
   const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -83,38 +85,36 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">John Doe - Software Developer</h1>
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto mb-4">
-          <AnimatePresence>
-            {messages.map((msg, index) => (
-              <ChatMessage key={index} message={msg.message} sender={msg.sender} />
-            ))}
-            {isTyping && <TypingIndicator key="typing" />}
-          </AnimatePresence>
-          <div ref={messagesEndRef} />
-        </div>
-        {conversationEnded && (
-          <form onSubmit={handleSubmit} className="mt-4">
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-grow p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                Send
-              </button>
-            </div>
-          </form>
-        )}
+    <div className="flex flex-col h-screen bg-gray-100">
+      <div className="bg-green-600 text-white p-4 shadow-md">
+        <h1 className="text-xl font-semibold">John Doe - Software Developer</h1>
       </div>
+      <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-4">
+        <AnimatePresence>
+          {messages.map((msg, index) => (
+            <ChatMessage key={index} message={msg.message} sender={msg.sender} />
+          ))}
+          {isTyping && <TypingIndicator key="typing" />}
+        </AnimatePresence>
+        <div ref={messagesEndRef} />
+      </div>
+      <form onSubmit={handleSubmit} className="p-4 bg-white border-t border-gray-200">
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            placeholder="Type a message"
+            className="flex-grow p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <button
+            type="submit"
+            className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            <Send size={24} />
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
