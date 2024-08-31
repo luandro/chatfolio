@@ -115,6 +115,7 @@ const Index = () => {
     }
     i18n.changeLanguage(lang);
     setCurrentStep('welcome');
+    setShowInput(false);
     initializeChat(addBotMessage, t, setCurrentStep);
   };
 
