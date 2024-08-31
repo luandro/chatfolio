@@ -3,11 +3,13 @@ import * as cheerio from 'cheerio';
 
 async function generateAbout() {
   try {
-    const { data } = await axios.get(import.meta.env.VITE_ABOUT_URL);
+    const aboutUrl = import.meta.env.VITE_ABOUT_URL || 'https://example.com';
+    const scrapingSelector = import.meta.env.VITE_SCRAPING_SELECTOR || 'body > div:first-of-type p';
+
+    const { data } = await axios.get(aboutUrl);
     const $ = cheerio.load(data);
 
-    // Supondo que o conteúdo desejado está dentro de um elemento com a classe 'about-content'
-    const aboutContent = $(import.meta.env.VITE_SCRAPING_SELECTOR).map((i, el) => $(el).text().trim()).get().join(' ');
+    const aboutContent = $(scrapingSelector).map((i, el) => $(el).text().trim()).get().join(' ');
     console.log(aboutContent);
     return aboutContent;
   } catch (error) {

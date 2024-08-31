@@ -155,7 +155,12 @@ const Index = () => {
       if (userInput.trim()) {
         setMessages((prevMessages) => [...prevMessages, { sender: 'user', message: userInput }]);
         
-        sendEmail(userEmail, userInput, t, addBotMessage, setMessages, setUserInput, setShowInput, setCurrentStep, setFormattedEmail);
+        try {
+          sendEmail(userEmail, userInput, t, addBotMessage, setMessages, setUserInput, setShowInput, setCurrentStep, setFormattedEmail);
+        } catch (error) {
+          console.error('Error sending email:', error);
+          addBotMessage(t('messageError'));
+        }
       }
     }
   };

@@ -3,7 +3,7 @@ import axios from 'axios';
 async function generateGithub() {
   try {
     // Fetch user data
-    const username = import.meta.env.VITE_GITHUB_USERNAME;
+    const username = import.meta.env.VITE_GITHUB_USERNAME || 'luandro';
     const userResponse = await axios.get(`https://api.github.com/users/${username}`);
     const userData = userResponse.data;
 
