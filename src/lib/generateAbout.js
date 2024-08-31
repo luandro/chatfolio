@@ -7,7 +7,7 @@ async function generateAbout() {
     const $ = cheerio.load(data);
 
     // Supondo que o conteúdo desejado está dentro de um elemento com a classe 'about-content'
-    const aboutContent = $('body section:nth-of-type(2) p').map((i, el) => $(el).text().trim()).get().join(' ');
+    const aboutContent = $(import.meta.env.VITE_SCRAPING_SELECTOR).map((i, el) => $(el).text().trim()).get().join(' ');
     console.log(aboutContent);
     return aboutContent;
   } catch (error) {
