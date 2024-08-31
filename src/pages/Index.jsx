@@ -82,6 +82,7 @@ const Index = () => {
   const [inputType, setInputType] = useState('email');
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
+  const [languageTimer, setLanguageTimer] = useState(null);
 
   const validateEmail = (email) => {
     return /\S+@\S+\.\S+/.test(email);
@@ -120,6 +121,9 @@ const Index = () => {
   };
 
   const handleLanguageChoice = (lang) => {
+    if (languageTimer) {
+      clearTimeout(languageTimer);
+    }
     i18n.changeLanguage(lang);
     setCurrentStep('welcome');
     initializeChat();
@@ -148,7 +152,9 @@ const Index = () => {
     
     const timer = setTimeout(() => {
       handleLanguageChoice(detectedLang);
-    }, 3000);
+    }, 5500);
+
+    setLanguageTimer(timer);
 
     return () => clearTimeout(timer);
   }, []);
@@ -206,7 +212,7 @@ const Index = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <div className="bg-green-600 text-white p-4 shadow-md flex justify-between items-center">
-        <h1 className="text-xl font-semibold">John Doe - {t('softwareDeveloper')}</h1>
+        <h1 className="text-xl font-semibold">{t('name')} - {t('softwareDeveloper')}</h1>
         <div className="flex space-x-2">
           {['en', 'pt', 'es'].map((lang) => (
             <button
@@ -214,7 +220,7 @@ const Index = () => {
               onClick={() => handleLanguageChoice(lang)}
               className={`px-2 py-1 rounded ${i18n.language === lang ? 'bg-white text-green-600' : 'bg-green-700'}`}
             >
-              {lang.toUpperCase()}
+              {t(`languages.${lang}`)}
             </button>
           ))}
         </div>
@@ -232,7 +238,12 @@ const Index = () => {
         <div className="p-4 bg-white border-t border-gray-200">
           <div className="flex justify-center space-x-4">
             <Button onClick={() => handleLanguageChoice(i18n.language)} icon={Globe}>{t('yes')}</Button>
-            <Button onClick={() => setCurrentStep('languageChoice')} icon={Globe}>{t('chooseLanguage')}</Button>
+            <Button onClick={() => {
+              if (languageTimer) {
+                clearTimeout(languageTimer);
+              }
+              setCurrentStep('languageChoice');
+            }} icon={Globe}>{t('chooseLanguage')}</Button>
           </div>
         </div>
       )}
@@ -275,7 +286,7 @@ const Index = () => {
                   className="flex items-center space-x-2 text-green-600"
                 >
                   <CheckCircle size={16} />
-                  <span className="text-sm">Email: {formattedEmail}</span>
+                  <span className="text-sm">{t('emailLabel')}: {formattedEmail}</span>
                 </motion.div>
               )}
               <div className="flex space-x-2">
