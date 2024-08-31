@@ -14,6 +14,7 @@
   "aboutMe": "About Me",
   "contact": "Contact",
   "emailPrompt": "Great! Please enter your email address.",
+  "enterEmail": "Please enter your email",
   "invalidEmail": "Please enter a valid email address.",
   "emailConfirmation": "Thank you. Your email ({{email}}) has been recorded. Now, please type your message.",
   "messageSent": "Thank you for your message! I'll get back to you soon.",

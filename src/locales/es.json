@@ -14,6 +14,7 @@
   "aboutMe": "Sobre Mí",
   "contact": "Contacto",
   "emailPrompt": "¡Genial! Por favor, ingresa tu dirección de correo electrónico.",
+  "enterEmail": "Por favor, introduce tu correo electrónico",
   "invalidEmail": "Por favor, ingresa una dirección de correo electrónico válida.",
   "emailConfirmation": "Gracias. Tu correo electrónico ({{email}}) ha sido registrado. Ahora, por favor escribe tu mensaje.",
   "messageSent": "¡Gracias por tu mensaje! Me pondré en contacto pronto.",
