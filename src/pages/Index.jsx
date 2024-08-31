@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send } from 'lucide-react';
+import { Send, Github, Briefcase, User } from 'lucide-react';
 
 const ChatMessage = ({ message, sender }) => (
   <motion.div
@@ -32,43 +32,75 @@ const TypingIndicator = () => (
   </motion.div>
 );
 
+const Button = ({ onClick, children, icon: Icon }) => (
+  <button
+    onClick={onClick}
+    className="flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-200"
+  >
+    {Icon && <Icon className="mr-2" size={18} />}
+    {children}
+  </button>
+);
+
 const Index = () => {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [userInput, setUserInput] = useState('');
-  const [conversationEnded, setConversationEnded] = useState(false);
+  const [showInput, setShowInput] = useState(false);
+  const [currentStep, setCurrentStep] = useState('welcome');
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
 
+  const addBotMessage = (message, delay = 1000) => {
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      setMessages((prevMessages) => [...prevMessages, { sender: 'bot', message }]);
+    }, delay);
+  };
+
+  const handleUserChoice = async (choice) => {
+    setMessages((prevMessages) => [...prevMessages, { sender: 'user', message: choice }]);
+    
+    switch (choice) {
+      case 'Latest Work':
+        addBotMessage("Here are my latest GitHub projects:");
+        // Fetch and display GitHub projects
+        break;
+      case 'Current Project Details':
+        addBotMessage("I'm currently working on a React-based portfolio website with a chatbot interface.");
+        break;
+      case 'About Me':
+        addBotMessage("I'm a software developer with 5 years of experience, specializing in React and Node.js.");
+        break;
+      case 'Contact':
+        setShowInput(true);
+        addBotMessage("Great! Please type your message below.");
+        break;
+      default:
+        addBotMessage("I'm not sure how to respond to that. Can you please choose one of the options?");
+    }
+  };
+
   useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch('/portfolio-messages.md');
-        const text = await response.text();
-        const lines = text.split('\n').filter(line => line.startsWith('- '));
-        const portfolioMessages = lines.map(line => line.slice(2));
-
-        const addMessage = (index) => {
-          if (index < portfolioMessages.length) {
-            setIsTyping(true);
+    const initializeChat = async () => {
+      addBotMessage("Welcome! I'm John Doe, a software developer.");
+      setTimeout(() => {
+        addBotMessage("I'm currently available for new projects.");
+        setTimeout(() => {
+          addBotMessage("Location: San Francisco, CA");
+          setTimeout(() => {
+            addBotMessage("Main current project: Building a React-based portfolio website");
             setTimeout(() => {
-              setIsTyping(false);
-              setMessages((prevMessages) => [...prevMessages, { sender: 'bot', message: portfolioMessages[index] }]);
-              setTimeout(() => addMessage(index + 1), 1000);
+              addBotMessage("Current collaboration: Working with a team on an open-source project");
+              setCurrentStep('userChoice');
             }, 1500);
-          } else {
-            setConversationEnded(true);
-          }
-        };
-
-        addMessage(0);
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-        setMessages([{ sender: 'bot', message: 'Sorry, there was an error loading the portfolio messages.' }]);
-      }
+          }, 1500);
+        }, 1500);
+      }, 1500);
     };
 
-    fetchMessages();
+    initializeChat();
   }, []);
 
   useEffect(() => {
@@ -80,12 +112,9 @@ const Index = () => {
     if (userInput.trim()) {
       setMessages((prevMessages) => [...prevMessages, { sender: 'user', message: userInput }]);
       setUserInput('');
-      // Simulate bot response
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        setMessages((prevMessages) => [...prevMessages, { sender: 'bot', message: "Thank you for your message! As an AI, I'm here to assist you with any questions about my experience or skills as a software developer." }]);
-      }, 2000);
+      addBotMessage("Thank you for your message! I'll get back to you soon.");
+      setShowInput(false);
+      setCurrentStep('userChoice');
     }
   };
 
@@ -103,23 +132,33 @@ const Index = () => {
         </AnimatePresence>
         <div ref={messagesEndRef} />
       </div>
-      <form onSubmit={handleSubmit} className="p-4 bg-white border-t border-gray-200">
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Type a message"
-            className="flex-grow p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-          <button
-            type="submit"
-            className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
-          >
-            <Send size={24} />
-          </button>
+      {currentStep === 'userChoice' && (
+        <div className="p-4 bg-white border-t border-gray-200 flex justify-center space-x-4">
+          <Button onClick={() => handleUserChoice('Latest Work')} icon={Github}>Latest Work</Button>
+          <Button onClick={() => handleUserChoice('Current Project Details')} icon={Briefcase}>Current Project</Button>
+          <Button onClick={() => handleUserChoice('About Me')} icon={User}>About Me</Button>
+          <Button onClick={() => handleUserChoice('Contact')} icon={Send}>Contact</Button>
         </div>
-      </form>
+      )}
+      {showInput && (
+        <form onSubmit={handleSubmit} className="p-4 bg-white border-t border-gray-200">
+          <div className="flex space-x-2">
+            <input
+              type="text"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              placeholder="Type your message"
+              className="flex-grow p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+            <button
+              type="submit"
+              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              <Send size={24} />
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
