@@ -23,5 +23,6 @@
   "languagePrompt": "Gostaria de continuar com {{language}}? (Clique em 'Sim' ou escolha outro idioma)",
   "yes": "Sim",
   "chooseLanguage": "Escolher Idioma",
-  "workPosition": "Desenvolvedor de Software"
+  "workPosition": "Desenvolvedor de Software",
+  "typeMessage": "Digite sua mensagem aqui..."
 }
