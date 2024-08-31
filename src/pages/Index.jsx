@@ -170,7 +170,7 @@ const Index = () => {
     <div className="flex flex-col h-screen bg-gray-100">
       <div className="bg-green-600 text-white p-4 shadow-md flex justify-between items-center">
         <h1 className="text-xl font-semibold">{t('name')} - {t('workPosition')}</h1>
-        <div className="flex space-x-2">
+        <div className="hidden sm:flex space-x-2">
           {['en', 'pt', 'es'].map((lang) => (
             <button
               key={lang}
@@ -180,6 +180,19 @@ const Index = () => {
               {t(`languages.${lang}`)}
             </button>
           ))}
+        </div>
+        <div className="sm:hidden relative">
+          <select
+            onChange={(e) => handleLanguageChoice(e.target.value)}
+            className="px-4 py-4 rounded bg-green-700 text-white"
+            value={i18n.language}
+          >
+            {['en', 'pt', 'es'].map((lang) => (
+              <option key={lang} value={lang}>
+                {t(`languages.${lang}`)}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-4">
