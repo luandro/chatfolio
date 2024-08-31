@@ -1,31 +1,23 @@
-# Welcome to your GPT Engineer project
+# Welcome to the Chatfolio Conversation Project
 
-## Project info
+## Project Information
 
 **Project**: chatfolio-conversation
 
-**URL**: https://run.gptengineer.app/projects/70808009-826c-4554-9d7b-a88a113c909c/improve
-
 ## How can I edit this code?
 
-There are several ways of editing your application.
-
-**Use GPT Engineer**
-
-Simply visit the GPT Engineer project at [GPT Engineer](https://gptengineer.app/projects/70808009-826c-4554-9d7b-a88a113c909c/improve) and start prompting.
-
-Changes made via gptengineer.app will be committed automatically to this repo.
+There are several ways to edit your application.
 
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in the GPT Engineer UI.
+If you want to work locally using your own IDE, you can clone this repository and push changes. Changes made will be reflected in the repository.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
 Follow these steps:
 
 ```sh
-git clone https://github.com/GPT-Engineer-App/chatfolio-conversation.git
+git clone https://github.com/YourUsername/chatfolio-conversation.git
 cd chatfolio-conversation
 npm i
 
@@ -47,21 +39,57 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
+## What technologies are used in this project?
 
-This project is built with .
+This project is built with:
 
 - Vite
 - React
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+## How can I set up EmailJS?
 
-All GPT Engineer projects can be deployed directly via the GPT Engineer app.
+To set up EmailJS, follow the steps below:
 
-Simply visit your project at [GPT Engineer](https://gptengineer.app/projects/70808009-826c-4554-9d7b-a88a113c909c/improve) and click on Share -> Publish.
+1. Create an account on [EmailJS](https://www.emailjs.com/).
+2. Create a new email service and a new email template.
+3. Add the EmailJS credentials to your project's configuration file.
 
-## I want to use a custom domain - is that possible?
+Copy the `.env.example` file to `.env` and set the following variables:
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify or GitHub pages. Visit our docs for more details: [Custom domains](https://docs.gptengineer.app/tips-tricks/custom-domain/)
+```
+VITE_EMAILJS_SERVICE_ID=your_service_id
+VITE_EMAILJS_TEMPLATE_ID=your_template_id
+VITE_EMAILJS_USER_ID=your_user_id
+VITE_ABOUT_URL=https://example.com
+VITE_GITHUB_USERNAME=luandro
+```
+
+## How can I connect to GitHub?
+
+To connect to GitHub, follow the steps below:
+
+1. Create a repository on GitHub.
+2. Add the remote repository to your local project:
+    ```sh
+    git remote add origin https://github.com/YourUsername/chatfolio-conversation.git
+    ```
+3. Commit and push your changes:
+    ```sh
+    git add .
+    git commit -m "Initial commit"
+    git push -u origin main
+    ```
+
+## How can I add an "aboutme" page from my website?
+
+To add an "aboutme" page, follow the steps below:
+
+1. Create a new React component for the "aboutme" page.
+2. Add the content of the "aboutme" page from your website.
+3. Import and use the component in your application.
+
+## Documentation in Portuguese
+
+For documentation in Portuguese, please refer to [LEIAME.md](./LEIAME.md).
