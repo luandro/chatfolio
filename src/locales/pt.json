@@ -14,6 +14,7 @@
   "currentProjectDetails": "Projeto Atual",
   "aboutMe": "Sobre Mim",
   "contact": "Contato",
+  "emailLabel": "Email",
   "emailPrompt": "Ótimo! Por favor, digite seu endereço de e-mail.",
   "enterEmail": "Por favor, digite seu endereço de e-mail",
   "invalidEmail": "Por favor, insira um endereço de e-mail válido.",
