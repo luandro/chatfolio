@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Github, Briefcase, User, Mail } from 'lucide-react';
+import { Send, Github, Briefcase, User, Mail, CheckCircle } from 'lucide-react';
 import emailjs from 'emailjs-com';
 
 const inputContainerVariants = {
@@ -74,6 +74,7 @@ const Index = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [userInput, setUserInput] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [formattedEmail, setFormattedEmail] = useState('');
   const [showInput, setShowInput] = useState(false);
   const [currentStep, setCurrentStep] = useState('welcome');
   const [inputType, setInputType] = useState('email');
@@ -146,9 +147,13 @@ const Index = () => {
     if (inputType === 'email') {
       if (validateEmail(userInput)) {
         setUserEmail(userInput);
+        const formatted = userInput.replace(/(.{2})(.+)(@.+)/, (_, start, middle, end) => 
+          start + middle.replace(/./g, '*') + end
+        );
+        setFormattedEmail(formatted);
         setUserInput('');
         setInputType('message');
-        addBotMessage("Thank you. Now, please type your message.");
+        addBotMessage(`Thank you. Your email (${formatted}) has been recorded. Now, please type your message.`);
       } else {
         addBotMessage("Please enter a valid email address.");
       }
@@ -178,6 +183,7 @@ const Index = () => {
         setUserInput('');
         setShowInput(false);
         setCurrentStep('userChoice');
+        setFormattedEmail('');
       }
     }
   };
@@ -216,23 +222,35 @@ const Index = () => {
             onSubmit={handleSubmit}
             className="p-4 bg-white border-t border-gray-200"
           >
-            <div className="flex space-x-2">
-              <motion.div className="flex-grow" variants={inputElementVariants}>
-                <input
-                  type={inputType === 'email' ? 'email' : 'text'}
-                  value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  placeholder={inputType === 'email' ? "Enter your email" : "Type your message"}
-                  className="w-full p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-              </motion.div>
-              <motion.button
-                variants={inputElementVariants}
-                type="submit"
-                className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <Send size={24} />
-              </motion.button>
+            <div className="flex flex-col space-y-2">
+              {formattedEmail && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center space-x-2 text-green-600"
+                >
+                  <CheckCircle size={16} />
+                  <span className="text-sm">Email: {formattedEmail}</span>
+                </motion.div>
+              )}
+              <div className="flex space-x-2">
+                <motion.div className="flex-grow" variants={inputElementVariants}>
+                  <input
+                    type={inputType === 'email' ? 'email' : 'text'}
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    placeholder={inputType === 'email' ? "Enter your email" : "Type your message"}
+                    className="w-full p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </motion.div>
+                <motion.button
+                  variants={inputElementVariants}
+                  type="submit"
+                  className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+                >
+                  <Send size={24} />
+                </motion.button>
+              </div>
             </div>
           </motion.form>
         )}
