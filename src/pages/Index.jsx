@@ -35,10 +35,10 @@ const TypingIndicator = () => (
 const Button = ({ onClick, children, icon: Icon }) => (
   <button
     onClick={onClick}
-    className="flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-200"
+    className="flex flex-col items-center justify-center px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-200 w-full md:w-auto md:flex-row"
   >
-    {Icon && <Icon className="mr-2" size={18} />}
-    {children}
+    {Icon && <Icon className="mb-1 md:mb-0 md:mr-2" size={24} />}
+    <span className="text-sm md:text-base">{children}</span>
   </button>
 );
 
@@ -133,11 +133,13 @@ const Index = () => {
         <div ref={messagesEndRef} />
       </div>
       {currentStep === 'userChoice' && (
-        <div className="p-4 bg-white border-t border-gray-200 flex justify-center space-x-4">
-          <Button onClick={() => handleUserChoice('Latest Work')} icon={Github}>Latest Work</Button>
-          <Button onClick={() => handleUserChoice('Current Project Details')} icon={Briefcase}>Current Project</Button>
-          <Button onClick={() => handleUserChoice('About Me')} icon={User}>About Me</Button>
-          <Button onClick={() => handleUserChoice('Contact')} icon={Send}>Contact</Button>
+        <div className="p-4 bg-white border-t border-gray-200">
+          <div className="grid grid-cols-2 md:flex md:justify-center gap-4 md:space-x-4">
+            <Button onClick={() => handleUserChoice('Latest Work')} icon={Github}>Latest Work</Button>
+            <Button onClick={() => handleUserChoice('Current Project Details')} icon={Briefcase}>Current Project</Button>
+            <Button onClick={() => handleUserChoice('About Me')} icon={User}>About Me</Button>
+            <Button onClick={() => handleUserChoice('Contact')} icon={Send}>Contact</Button>
+          </div>
         </div>
       )}
       {showInput && (
