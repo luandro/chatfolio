@@ -2,6 +2,32 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Github, Briefcase, User } from 'lucide-react';
 
+const inputContainerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.5,
+      when: "beforeChildren",
+      staggerChildren: 0.2,
+    }
+  }
+};
+
+const inputElementVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 15,
+    }
+  }
+};
+
 const ChatMessage = ({ message, sender }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -142,25 +168,37 @@ const Index = () => {
           </div>
         </div>
       )}
-      {showInput && (
-        <form onSubmit={handleSubmit} className="p-4 bg-white border-t border-gray-200">
-          <div className="flex space-x-2">
-            <input
-              type="text"
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              placeholder="Type your message"
-              className="flex-grow p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-            <button
-              type="submit"
-              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
-              <Send size={24} />
-            </button>
-          </div>
-        </form>
-      )}
+      <AnimatePresence>
+        {showInput && (
+          <motion.form
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={inputContainerVariants}
+            onSubmit={handleSubmit}
+            className="p-4 bg-white border-t border-gray-200"
+          >
+            <div className="flex space-x-2">
+              <motion.div className="flex-grow" variants={inputElementVariants}>
+                <input
+                  type="text"
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  placeholder="Type your message"
+                  className="w-full p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </motion.div>
+              <motion.button
+                variants={inputElementVariants}
+                type="submit"
+                className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                <Send size={24} />
+              </motion.button>
+            </div>
+          </motion.form>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
