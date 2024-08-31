@@ -4,7 +4,7 @@
     "pt": "Portuguese",
     "es": "Spanish"
   },
-  "welcome": "Welcome! I'm John Doe, a software developer.",
+  "welcome": "Welcome! I'm Joe Doe, a software developer.",
   "available": "I'm currently available for new projects.",
   "location": "Location: San Francisco, CA",
   "currentProject": "Main current project: Building a React-based portfolio website",
@@ -21,5 +21,6 @@
   "messageError": "There was an error sending your message. Please try again later.",
   "languagePrompt": "Would you like to continue with {{language}}? (Click 'Yes' or choose another language)",
   "yes": "Yes",
-  "chooseLanguage": "Choose Language"
+  "chooseLanguage": "Choose Language",
+  "workPosition": "Work Position: Software Developer"
 }

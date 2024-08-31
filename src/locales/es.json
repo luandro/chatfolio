@@ -4,7 +4,7 @@
     "pt": "Portugués",
     "es": "Español"
   },
-  "welcome": "¡Bienvenido! Soy John Doe, un desarrollador de software.",
+  "welcome": "¡Bienvenido! Soy Joe Doe, un desarrollador de software.",
   "available": "Actualmente estoy disponible para nuevos proyectos.",
   "location": "Ubicación: San Francisco, CA",
   "currentProject": "Proyecto principal actual: Construyendo un sitio web de portafolio basado en React",
@@ -21,5 +21,6 @@
   "messageError": "Hubo un error al enviar tu mensaje. Por favor, intenta de nuevo más tarde.",
   "languagePrompt": "¿Te gustaría continuar en {{language}}? (Haz clic en 'Sí' o elige otro idioma)",
   "yes": "Sí",
-  "chooseLanguage": "Elegir Idioma"
+  "chooseLanguage": "Elegir Idioma",
+  "workPosition": "Posición de Trabajo: Desarrollador de Software"
 }
