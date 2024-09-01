@@ -63,13 +63,15 @@ const TypingIndicator = () => (
 );
 
 const Button = ({ onClick, children, icon: Icon }) => (
-  <button
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
     onClick={onClick}
     className="flex flex-col items-center justify-center px-4 py-2 bg-main text-white rounded-full hover:bg-main focus:outline-none focus:ring-2 focus:ring-main transition-colors duration-200 w-full md:w-auto md:flex-row"
   >
     {Icon && <Icon className="mb-1 md:mb-0 md:mr-2" size={24} />}
     <span className="text-sm md:text-base">{children}</span>
-  </button>
+  </motion.button>
 );
 
 const Index = () => {
@@ -213,7 +215,13 @@ const Index = () => {
         <div ref={messagesEndRef} />
       </div>
       {currentStep === 'language' && (
-        <div className="p-4 bg-background border-t border-gray-200">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          variants={inputContainerVariants}
+          className="p-4 bg-background border-t border-gray-200"
+        >
           <div className="flex justify-center space-x-4">
             <Button onClick={() => handleLanguageChoice(i18n.language)} icon={Globe}>{t('yes')}</Button>
             <Button onClick={() => {
@@ -223,10 +231,16 @@ const Index = () => {
               setCurrentStep('languageChoice');
             }} icon={Globe}>{t('chooseLanguage')}</Button>
           </div>
-        </div>
+        </motion.div>
       )}
       {currentStep === 'languageChoice' && (
-        <div className="p-4 bg-second border-t border-gray-200">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          variants={inputContainerVariants}
+          className="p-4 bg-second border-t border-gray-200"
+        >
           <div className="flex justify-center space-x-4">
             {['en', 'pt', 'es'].map((lang) => (
               <Button key={lang} onClick={() => handleLanguageChoice(lang)} icon={Globe}>
@@ -234,17 +248,23 @@ const Index = () => {
               </Button>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
       {currentStep === 'userChoice' && (
-        <div className="p-6 bg-second border-t border-gray-200">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          variants={inputContainerVariants}
+          className="p-6 bg-second border-t border-gray-200"
+        >
           <div className="grid grid-cols-2 md:flex md:justify-center gap-4 md:space-x-4">
             <Button onClick={() => handleUserChoice(t('latestWork'), t, setMessages, addBotMessage, setShowInput, setInputType)} icon={Github}>{t('latestWork')}</Button>
             <Button onClick={() => handleUserChoice(t('currentProjectDetails'), t, setMessages, addBotMessage, setShowInput, setInputType)} icon={Briefcase}>{t('currentProjectDetails')}</Button>
             <Button onClick={() => handleUserChoice(t('aboutMe'), t, setMessages, addBotMessage, setShowInput, setInputType)} icon={User}>{t('aboutMe')}</Button>
             <Button onClick={() => handleUserChoice(t('contact'), t, setMessages, addBotMessage, setShowInput, setInputType)} icon={Mail}>{t('contact')}</Button>
           </div>
-        </div>
+        </motion.div>
       )}
       <AnimatePresence>
         {showInput && (
